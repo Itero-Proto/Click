@@ -1,0 +1,48 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Click Game</title>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    #clickBtn { padding: 20px 40px; font-size: 24px; }
+    #score { font-size: 28px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Нажми как можно больше за 10 сек!</h1>
+  <button id="clickBtn">Жми!</button>
+  <div id="score">Очки: 0</div>
+  <script>
+    let score = 0;
+    let timeLeft = 10;
+    let started = false;
+
+    const btn = document.getElementById("clickBtn");
+    const scoreDiv = document.getElementById("score");
+
+    btn.addEventListener("click", () => {
+      if (!started) {
+        started = true;
+        const interval = setInterval(() => {
+          timeLeft--;
+          if (timeLeft <= 0) {
+            clearInterval(interval);
+            btn.disabled = true;
+            btn.textContent = "Время вышло!";
+            // Отправка результата в Telegram WebApp
+            if (window.Telegram.WebApp) {
+              Telegram.WebApp.sendData(JSON.stringify({ score }));
+              Telegram.WebApp.close();
+            }
+          }
+        }, 1000);
+      }
+
+      score++;
+      scoreDiv.textContent = `Очки: ${score}`;
+    });
+  </script>
+</body>
+</html>
